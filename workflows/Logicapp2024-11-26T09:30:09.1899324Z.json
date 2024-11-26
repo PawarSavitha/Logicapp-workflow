@@ -26,10 +26,3 @@
     },
     "parameters": {}
 }
-```
-
-### Explanation
-
-1. **Trigger**:
-   - **Type:** `Request` - This sets up the trigger to be an incoming HTTP request.
-   - **Inputs:** `{}
