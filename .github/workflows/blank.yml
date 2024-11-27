@@ -5,7 +5,7 @@ on:
     branches:
       - main  # Trigger only when there's a push to the main branch
     paths:
-      - 'Logicapp-workflow/workflows/**'  # Watch changes in the workflows directory
+      - 'workflows/**'  # Watch changes in the workflows directory
 
 jobs:
   push-modified-file:
