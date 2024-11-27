@@ -35,7 +35,7 @@ jobs:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}
         run: |
           # Clone the empty repository (Repository 2)
-          git clone https://$REPO2_PAT@github.com/PawarSavitha/approved-code-repo.git Final-Logic-app-code
+          git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git Final-Logic-app-code
 
       - name: Copy modified files to Repo 2
         run: |
