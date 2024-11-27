@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'Logicapp-workflow/workflows/**' 
 
 jobs:
   push-modified-file:
