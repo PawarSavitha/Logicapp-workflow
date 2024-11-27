@@ -7,9 +7,9 @@
                     "headers": {
                         "Content-Type": "application/json"
                     },
-                    "method": "POST", // or GET, PUT, DELETE depending on the requirement
-                    "uri": "http://<CHROME_DEBUGGING_ENDPOINT>", // Change to the actual Chrome Debug URL
-                    "body": "{ \"method\": \"Page.navigate\", \"params\": { \"url\": \"https://example.com\" } }" // Example payload
+                    "method": "POST", 
+                    "uri": "http://<CHROME_DEBUGGING_ENDPOINT>", 
+                    "body": "{ \"method\": \"Page.navigate\", \"params\": { \"url\": \"https://example.com\" } }" 
                 },
                 "runAfter": {},
                 "type": "Http"
@@ -30,15 +30,3 @@
     },
     "parameters": {}
 }
-```
-
-### Explanation:
-1. **Trigger**:
-    - `"triggers": { "manualTrigger": { "type": "Request" ... } }`: This defines an HTTP request trigger. The logic app starts when an HTTP request is received.
-
-2. **Action**:
-    - `"actions": { "HTTP_Request_to_Chrome": { "type": "Http" ... } }`: This is the action that sends an HTTP request to the Chrome Debugging endpoint.
-    - `"method": "POST"`: Defines the HTTP method used (can be changed to GET, PUT, DELETE, as required).
-    - `"uri": "http://<CHROME_DEBUGGING_ENDPOINT>"`: Replace this with the actual URL for the Chrome Debugging endpoint.
-    - `"headers": { "Content-Type": "application/json" }`: Sets the content type for the request.
-    - `"body": "{ \"method\": \"Page.navigate\", \"params\": { \"url\": \"https://example.com\" } }
