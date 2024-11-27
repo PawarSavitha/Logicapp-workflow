@@ -11,9 +11,9 @@ jobs:
 
     steps:
       - name: Checkout Repository 1
-        uses: actions/checkout@v3  # Checkout Repo 1
+        uses: actions/checkout@v3
 
-      - name: Identify Modified Files
+      - name: Identify modified files
         id: get_changed_files
         run: |
           # Check if this is the initial commit
@@ -35,25 +35,13 @@ jobs:
         env:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}
         run: |
+          if [ -d "Final-Logic-app-code" ]; then
+            rm -rf Final-Logic-app-code
+          fi
           git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git Final-Logic-app-code
 
       - name: Copy Modified Files to Deploy Directory
         run: |
+          mkdir -p Final-Logic-app-code/Deploy
           changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
-          if [ -n "$changed_files" ]; then
-            mkdir -p Final-Logic-app-code/Deploy
-            for file in $changed_files; do
-              if [[ $file == Logicapp-workflow/workflows/* ]]; then
-                cp --parents $file Final-Logic-app-code/Deploy/
-              fi
-            done
-          fi
-
-      - name: Commit and Push Changes to Repo 2
-        run: |
-          cd Final-Logic-app-code
-          git config user.name "PawarSavitha"
-          git config user.email "savithapawar038@gmail.com"
-          git add .
-          git diff --cached --exit-code || git commit -m "Add modified files to Deploy directory"
-          git push origin main
+          if [ -n "$ch
