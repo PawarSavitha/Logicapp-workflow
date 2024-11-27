@@ -36,7 +36,7 @@ jobs:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Personal Access Token for Repo 2
         run: |
           # Clone Repo 2 into a temporary directory
-          git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git PawarSavitha/Final-Logic-app-code
+          git clone https://$REPO2_PAT@github.com/PawarSavitha/Logicapp-workflow.git PawarSavitha/Final-Logic-app-code
 
       - name: Create Deploy Directory in Repo 2 (if it doesn't exist)
         run: |
