@@ -65,7 +65,7 @@ jobs:
       - name: Commit and Push Changes to Repo 2
         run: |
           # Commit changes in Repo 2
-          cd Final-Logic-app-code  # Navigate to the cloned Repo 2 directory
+          cd PawarSavitha/Final-Logic-app-code  # Navigate to the cloned Repo 2 directory
           git config user.name "PawarSavitha"  # Configure git username
           git config user.email "savithapawar038@gmail.com"  # Configure git email
           git add .  # Stage all changes in the Deploy directory
