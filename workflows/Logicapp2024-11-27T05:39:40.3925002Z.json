@@ -7,9 +7,8 @@
                     "Content-Type": "application/json"
                 },
                 "method": "POST",
-                "uri": "http://127.0.0.1:9222/json", // Example URI for Chrome DevTools
-                "body": {
-                    // Customize this JSON body based on your specific needs
+                "uri": "http://127.0.0.1:9222/json",
+                "body": {                    
                     "id": 1,
                     "method": "Network.enable",
                     "params": {}
@@ -30,6 +29,5 @@
             "type": "Request"
         }
     },
-    "outputs": {},
-    "description": "Logic app to trigger on an HTTP request and send HTTP request to Chrome"
+    "outputs": {},    
 }
