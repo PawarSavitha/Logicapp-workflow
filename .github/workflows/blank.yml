@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'Logicapp-workflow/workflows/**'  # Monitor changes in this directory
 
 jobs:
   push-modified-file:
@@ -12,17 +14,22 @@ jobs:
     steps:
       - name: Checkout Repository 1
         uses: actions/checkout@v3
-        with:
-          repository: PawarSavitha/Logicapp-workflow
-          ref: main
+
+      - name: Debug Directory Structure
+        run: |
+          echo "Current Directory Structure:"
+          find .
 
       - name: Identify modified files
         id: get_changed_files
         run: |
-          # Get the list of modified files in the latest commit
           changed_files=$(git diff --name-only HEAD^..HEAD)
           echo "Changed files: $changed_files"
           echo "::set-output name=changed_files::$changed_files"
+
+      - name: Debug Changed Files
+        run: |
+          echo "Changed files: ${{ steps.get_changed_files.outputs.changed_files }}"
 
       - name: Clone Approved Code Repository
         env:
