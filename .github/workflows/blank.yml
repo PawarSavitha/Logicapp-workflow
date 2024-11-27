@@ -44,7 +44,7 @@ jobs:
         env:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Ensure the PAT secret is set in the repo's secrets
         run: |
-          git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git Final-Logic-app-code
+          git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git PawarSavitha/Final-Logic-app-code
 
       # Copy modified files to Repo 2's Deploy directory
       - name: Copy modified files to Repo 2's Deploy directory
