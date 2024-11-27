@@ -1,0 +1,27 @@
+name: Trigger Logic App on Main Changes
+
+# Trigger this workflow on push events to the main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 2: List modified and added files
+      - name: Get Modified Files
+        id: changes
+        run: |
+          echo "## Getting added and modified files"
+          git diff --name-only HEAD^ HEAD > changes.txt
+          echo "Modified files:"
+          cat changes.txt
+          echo "::set-output name=files::$(cat changes.txt)"
+
+
