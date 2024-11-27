@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'Logicapp-workflow/workflows/**'  # Only trigger on changes within the workflows directory
+      - 'Logicapp-workflow/workflows/**'  # Watch this directory for changes
 
 jobs:
   push-modified-file:
@@ -37,23 +37,17 @@ jobs:
           changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
           if [ -n "$changed_files" ]; then
             for file in $changed_files; do
-              # Only copy files that are in the 'Logicapp-workflow/workflows' directory
               if [[ $file == Logicapp-workflow/workflows/* ]]; then
                 cp $file Final-Logic-app-code/
               fi
             done
           fi
 
-      - name: Check if files were copied
-        run: |
-          ls Final-Logic-app-code
-
       - name: Commit and Push Changes to Repo 2
         run: |
           cd Final-Logic-app-code
           git config user.name "PawarSavitha"
           git config user.email "savithapawar038@gmail.com"
-          
           git add .
           git diff --cached --exit-code || git commit -m "Add modified files"
           git push origin main
