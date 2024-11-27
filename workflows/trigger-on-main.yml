@@ -17,11 +17,11 @@ jobs:
 
       - name: Push to Approved Code Repository
         run: |
-      	 git clone https://github.com/PawarSavitha/Logicapp-workflow Final-Logic-app-code
-      	 cp -r * Final-Logic-app-code/
-      	 cd Final-Logic-app-code
-      	 git config PawarSavitha "GitHub Action"
-      	 git config savithapawar038@gmail.com l "action@github.com"
-      	 git add .
-      	 git commit -m "Approved logic app code"
-      	 git push origin main
+          	 git clone https://github.com/PawarSavitha/Logicapp-workflow Final-Logic-app-code
+          	 cp -r * Final-Logic-app-code/
+          	 cd Final-Logic-app-code
+          	 git config PawarSavitha "GitHub Action"
+          	 git config savithapawar038@gmail.com l "action@github.com"
+          	 git add .
+          	 git commit -m "Approved logic app code"
+          	 git push origin main
