@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2019-09-01/workflowdefinition.json#",
+    "actions": {
+        "HTTP_Request_to_Chrome": {
+            "inputs": {
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "method": "POST",
+                "uri": "http://localhost:9222/json", // assuming you're sending a request to Chrome's DevTools Protocol (default address)
+                "body": {
+                    "method": "Page.navigate",
+                    "params": {
+                        "url": "https://www.example.com" // change this URL as needed
+                    }
+                }
+            },
+            "runAfter": {},
+            "type": "Http"
+        }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+        "When_an_HTTP_request_is_received": {
+            "inputs": {
+                "schema": {
+                    "properties": {},
+                    "type": "object"
+                }
+            },
+            "type": "Request"
+        }
+    }
+}
