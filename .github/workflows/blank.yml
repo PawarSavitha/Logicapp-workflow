@@ -3,64 +3,70 @@ name: Push Modified File to Approved Code Repo
 on:
   push:
     branches:
-      - main
+      - main  # Trigger only when there's a push to the main branch
+    paths:
+      - 'Logicapp-workflow/workflows/**'  # Watch changes in the workflows directory
 
 jobs:
   push-modified-file:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository 1 (Source Repo)
-        uses: actions/checkout@v3  # Ensure this uses the correct action
+      # Checkout Repo 1
+      - name: Checkout Repository 1
+        uses: actions/checkout@v3
+        with:
+          repository: PawarSavitha/Logicapp-workflow  # Replace with your Repo 1's name
+          ref: main
 
-      - name: Identify Modified Files
+      # Identify modified files from the latest commit
+      - name: Identify modified files
         id: get_changed_files
         run: |
-          # Get the list of modified files in the latest commit
+          # Check if this is the initial commit
           if [ $(git rev-list --count HEAD) -eq 1 ]; then
             echo "Initial commit detected. Listing all files."
-            changed_files=$(git ls-files)
+            changed_files=$(git ls-files)  # List all files if it's the initial commit
           else
             echo "Listing modified files from the latest commit."
-            changed_files=$(git diff --name-only HEAD^..HEAD)
+            changed_files=$(git diff --name-only HEAD^..HEAD)  # Get modified files from the latest commit
           fi
           echo "Changed files: $changed_files"
-          echo "::set-output name=changed_files::$changed_files"
+          echo "::set-output name=changed_files::$changed_files"  # Output the changed files
 
+      # Debug: Check which files are modified
       - name: Debug Changed Files
         run: |
           echo "Changed files: ${{ steps.get_changed_files.outputs.changed_files }}"
 
-      - name: Clone Approved Code Repository (Repo 2)
+      # Clone Repo 2 (Final-Logic-app-code)
+      - name: Clone Approved Code Repository
         env:
-          REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Personal Access Token for Repo 2
+          REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Ensure the PAT secret is set in the repo's secrets
         run: |
-          # Clone Repo 2 into a temporary directory
           git clone https://github.com/PawarSavitha/Logicapp-workflow.git PawarSavitha/Final-Logic-app-code
 
-      - name: Create Deploy Directory in Repo 2 (if it doesn't exist)
-        run: |
-          # Check if Deploy directory exists, if not create it
-          mkdir -p Final-Logic-app-code/Deploy
-
-      - name: Copy Modified Files to Repo 2's Deploy Directory
+      # Copy modified files to Repo 2's Deploy directory
+      - name: Copy modified files to Repo 2's Deploy directory
         run: |
           changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
           if [ -n "$changed_files" ]; then
             for file in $changed_files; do
-              # Only copy files from Logicapp-workflow/workflows/
+              # Only copy files from the Logicapp-workflow/workflows/ directory
               if [[ $file == Logicapp-workflow/workflows/* ]]; then
-                echo "Copying $file to Repo 2's Deploy directory"
-                cp $file Final-Logic-app-code/Deploy/
+                # Ensure Deploy directory exists in Repo 2 before copying
+                mkdir -p Final-Logic-app-code/Deploy
+                cp "$file" Final-Logic-app-code/Deploy/  # Copy each changed file to Deploy directory
               fi
             done
           fi
 
+      # Commit and push the modified files to Repo 2
       - name: Commit and Push Changes to Repo 2
         run: |
           cd Final-Logic-app-code
-          git config user.name "PawarSavitha"
-          git config user.email "savithapawar038@gmail.com"
-          git add .  # Add all the copied files
-          git diff --cached --exit-code || git commit -m "Add modified files"
-          git push origin main
+          git config user.name "PawarSavitha"  # Configure git username
+          git config user.email "savithapawar038@gmail.com"  # Configure git email
+          git add .  # Stage all changes in the Deploy directory
+          git diff --cached --exit-code || git commit -m "Add modified files"  # Only commit if there are changes
+          git push origin main  # Push changes to Repo 2
