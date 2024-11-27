@@ -36,6 +36,10 @@ jobs:
         env:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}
         run: |
+          # Check if Final-Logic-app-code directory exists, remove if it does
+          if [ -d "Final-Logic-app-code" ]; then
+            rm -rf Final-Logic-app-code
+          fi
           git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git Final-Logic-app-code
 
       # Create Deploy directory in Repo 2
