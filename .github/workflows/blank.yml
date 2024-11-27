@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'main/Logicapp-workflow/workflows/**'  # Monitor changes in this directory
+      - 'Logicapp-workflow/workflows/**'  # Monitor changes in this directory
 
 jobs:
   push-modified-file:
