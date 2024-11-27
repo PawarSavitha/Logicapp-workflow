@@ -1,4 +1,4 @@
-name: Push to Approved Code Repo
+name: Push Modified File to Approved Code Repo
 
 on:
   push:
@@ -6,26 +6,44 @@ on:
       - main
 
 jobs:
-  push-to-repo2:
+  push-modified-file:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository 1
         uses: actions/checkout@v3
         with:
-          repository: PawarSavitha/Logicapp-workflow 
+          repository: PawarSavitha/Logicapp-workflow   # Replace with your actual repository name
           ref: main
 
-      - name: Push to Approved Code Repository
-        env:
-          REPO2_PAT: ${{ secrets.REPO2_PAT }}  
+      - name: Identify modified files
+        id: get_changed_files
         run: |
-          git clone https://$REPO2_PAT@github.com/PawarSavitha/approved-code-repo.git Final-Logic-app-code
+          # Get the list of modified files in the latest commit
+          changed_files=$(git diff --name-only HEAD^..HEAD)
+          echo "Changed files: $changed_files"
+          echo "::set-output name=changed_files::$changed_files"
 
-          cp -r * Final-Logic-app-code/
+      - name: Clone Approved Code Repository (which is empty initially)
+        env:
+          REPO2_PAT: ${{ secrets.REPO2_PAT }}
+        run: |
+          # Clone the empty repository (Repository 2)
+                    git clone https://$REPO2_PAT@github.com/PawarSavitha/approved-code-repo.git Final-Logic-app-code
 
+      - name: Copy modified files to Repo 2
+        run: |
+          # Copy only the modified file(s) to the target repo
+          changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
+          if [ -n "$changed_files" ]; then
+            for file in $changed_files; do
+              cp $file Final-Logic-app-code/
+            done
+          fi
+
+      - name: Commit and Push Changes to Repo 2
+        run: |
           cd Final-Logic-app-code
-
          
           git config user.name "PawarSavitha"
           git config user.email "savithapawar038@gmail.com"
