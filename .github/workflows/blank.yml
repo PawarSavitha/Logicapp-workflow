@@ -10,13 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout Repo 1 (source repository)
       - name: Checkout Repository 1
         uses: actions/checkout@v3
+        with:
+          repository: PawarSavitha/Logicapp-workflow  # Replace with your actual repository name
+          ref: main
 
+      # Identify modified files
       - name: Identify modified files
         id: get_changed_files
         run: |
-          # Check if this is the initial commit
           if [ $(git rev-list --count HEAD) -eq 1 ]; then
             echo "Initial commit detected. Listing all files."
             changed_files=$(git ls-files)
@@ -27,25 +31,36 @@ jobs:
           echo "Changed files: $changed_files"
           echo "::set-output name=changed_files::$changed_files"
 
-      - name: Debug Changed Files
-        run: |
-          echo "Changed files: ${{ steps.get_changed_files.outputs.changed_files }}"
-
+      # Clone Repo 2 (target repository)
       - name: Clone Approved Code Repository
         env:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}
         run: |
-          if [ -d "Final-Logic-app-code" ]; then
-            rm -rf Final-Logic-app-code
-          fi
           git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git Final-Logic-app-code
 
-      - name: Copy Modified Files to Deploy Directory
+      # Create Deploy directory in Repo 2
+      - name: Create Deploy Directory in Repo 2
         run: |
-          mkdir -p Final-Logic-app-code/Deploy
+          mkdir -p Final-Logic-app-code/Deploy  # Create Deploy directory in Repo 2
+
+      # Copy modified files to the Deploy directory in Repo 2
+      - name: Copy modified files to Repo 2
+        run: |
           changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
           if [ -n "$changed_files" ]; then
             for file in $changed_files; do
-              cp "$file" "Final-Logic-app-code/Deploy/"
+              if [[ $file == Logicapp-workflow/workflows/* ]]; then
+                cp "$file" "Final-Logic-app-code/Deploy/"
+              fi
             done
           fi
+
+      # Commit and push changes to Repo 2
+      - name: Commit and Push Changes to Repo 2
+        run: |
+          cd Final-Logic-app-code
+          git config user.name "PawarSavitha"
+          git config user.email "savithapawar038@gmail.com"
+          git add .
+          git diff --cached --exit-code || git commit -m "Add modified files"
+          git push origin main
