@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository 1 (Logicapp-workflow)
-        uses: actions/checkout@v3  # Checkout Repo 1 (Logicapp-workflow)
+      - name: Checkout Repository 1 (Source Repo)
+        uses: actions/checkout@v3  # Ensure this uses the correct action
 
-      - name: Identify modified files
+      - name: Identify Modified Files
         id: get_changed_files
         run: |
-          # Check if this is the initial commit (first commit)
+          # Get the list of modified files in the latest commit
           if [ $(git rev-list --count HEAD) -eq 1 ]; then
             echo "Initial commit detected. Listing all files."
             changed_files=$(git ls-files)
@@ -31,25 +31,26 @@ jobs:
         run: |
           echo "Changed files: ${{ steps.get_changed_files.outputs.changed_files }}"
 
-      - name: Clone Repo 2 (Final-Logic-app-code)
+      - name: Clone Approved Code Repository (Repo 2)
         env:
-          REPO2_PAT: ${{ secrets.REPO2_PAT }}
+          REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Personal Access Token for Repo 2
         run: |
-          # Clone Repo 2 (Final-Logic-app-code) cleanly
+          # Clone Repo 2 into a temporary directory
           git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git PawarSavitha/Final-Logic-app-code
 
-      - name: Create Deploy Directory in Repo 2 (if not exists)
+      - name: Create Deploy Directory in Repo 2 (if it doesn't exist)
         run: |
-          # Check if 'Deploy' directory exists, if not, create it
+          # Check if Deploy directory exists, if not create it
           mkdir -p Final-Logic-app-code/Deploy
 
-      - name: Copy modified files to Repo 2
+      - name: Copy Modified Files to Repo 2's Deploy Directory
         run: |
           changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
           if [ -n "$changed_files" ]; then
             for file in $changed_files; do
+              # Only copy files from Logicapp-workflow/workflows/
               if [[ $file == Logicapp-workflow/workflows/* ]]; then
-                # Copy modified file from Repo 1 to Repo 2's Deploy directory
+                echo "Copying $file to Repo 2's Deploy directory"
                 cp $file Final-Logic-app-code/Deploy/
               fi
             done
@@ -60,6 +61,6 @@ jobs:
           cd Final-Logic-app-code
           git config user.name "PawarSavitha"
           git config user.email "savithapawar038@gmail.com"
-          git add .
+          git add .  # Add all the copied files
           git diff --cached --exit-code || git commit -m "Add modified files"
           git push origin main
