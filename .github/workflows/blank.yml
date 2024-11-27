@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'Logicapp-workflow/workflows/**'  # Only trigger for changes in this directory
 
 jobs:
   push-modified-file:
@@ -14,53 +16,48 @@ jobs:
       - name: Checkout Repository 1
         uses: actions/checkout@v3
         with:
-          repository: PawarSavitha/Logicapp-workflow  # Replace with your actual Repo 1 name
+          repository: PawarSavitha/Logicapp-workflow  # Your Repo 1
           ref: main
 
       # Identify modified files
       - name: Identify modified files
         id: get_changed_files
         run: |
-          if [ $(git rev-list --count HEAD) -eq 1 ]; then
-            echo "Initial commit detected. Listing all files."
-            changed_files=$(git ls-files)
-          else
-            echo "Listing modified files from the latest commit."
-            changed_files=$(git diff --name-only HEAD^..HEAD)
-          fi
+          # Check for the modified files in the latest commit
+          changed_files=$(git diff --name-only HEAD^..HEAD)
           echo "Changed files: $changed_files"
           echo "::set-output name=changed_files::$changed_files"
 
-      # Clone Repo 2 (target repository where you want to push modified files)
-      - name: Clone Approved Code Repository
+      # Clone Repo 2 (target repository)
+      - name: Clone Approved Code Repository (Repo 2)
         env:
-          REPO2_PAT: ${{ secrets.REPO2_PAT }}
+          REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Assuming you have a token stored in Secrets
         run: |
           git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git Final-Logic-app-code
 
-      # Create Deploy directory in Repo 2
+      # Create Deploy directory in Repo 2 if it doesn't exist
       - name: Create Deploy Directory in Repo 2
         run: |
-          mkdir -p Final-Logic-app-code/Deploy  # Create the Deploy directory inside Repo 2
+          mkdir -p Final-Logic-app-code/Deploy  # Create Deploy directory inside Repo 2
 
-      # Copy modified files to the Deploy directory in Repo 2
-      - name: Copy modified files to Repo 2
+      # Copy modified files to Repo 2 (into Deploy directory)
+      - name: Copy modified files to Repo 2 (Deploy directory)
         run: |
           changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
           if [ -n "$changed_files" ]; then
             for file in $changed_files; do
               if [[ $file == Logicapp-workflow/workflows/* ]]; then
-                # Copy files from Repo 1 to Repo 2's Deploy directory
                 cp "$file" "Final-Logic-app-code/Deploy/"
               fi
             done
           fi
 
-      # Commit and push changes to Repo 2
+      # Commit and Push Changes to Repo 2 (target repo)
       - name: Commit and Push Changes to Repo 2
         run: |
           cd Final-Logic-app-code
           git config user.name "PawarSavitha"
           git config user.email "savithapawar038@gmail.com"
           git add .
-          git diff --cached --exit-code
+          git diff --cached --exit-code || git commit -m "Add modified files"
+          git push origin main
