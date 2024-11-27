@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout Repository 1
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Ensure this uses the correct action
 
       - name: Identify modified files
         id: get_changed_files
@@ -34,3 +34,25 @@ jobs:
       - name: Clone Approved Code Repository
         env:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}
+        run: |
+          git clone https://$REPO2_PAT@github.com/PawarSavitha/approved-code-repo.git Final-Logic-app-code
+
+      - name: Copy modified files to Repo 2
+        run: |
+          changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
+          if [ -n "$changed_files" ]; then
+            for file in $changed_files; do
+              if [[ $file == Logicapp-workflow/workflows/* ]]; then
+                cp $file Final-Logic-app-code/
+              fi
+            done
+          fi
+
+      - name: Commit and Push Changes to Repo 2
+        run: |
+          cd Final-Logic-app-code
+          git config user.name "PawarSavitha"
+          git config user.email "savithapawar038@gmail.com"
+          git add .
+          git diff --cached --exit-code || git commit -m "Add modified files"
+          git push origin main
