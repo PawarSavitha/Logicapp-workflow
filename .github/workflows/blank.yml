@@ -35,7 +35,7 @@ jobs:
         env:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}
         run: |
-          # Clone Repo 2 (Final-Logic-app-code) into workspace
+          # Clone Repo 2 (Final-Logic-app-code) cleanly
           git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git PawarSavitha/Final-Logic-app-code
 
       - name: Create Deploy Directory in Repo 2 (if not exists)
