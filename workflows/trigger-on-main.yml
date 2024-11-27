@@ -1,27 +1,27 @@
-name: Trigger Logic App on Main Changes
+name: Push to Approved Code Repo
 
-# Trigger this workflow on push events to the main branch
 on:
   push:
     branches:
       - main
 
 jobs:
-  detect-changes:
+  push-to-repo2:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Check out the repository
-      - name: Checkout Repository
+      - name: Checkout Repository 1
         uses: actions/checkout@v3
+        with:
+          repository: your-org/development-repo
+          ref: main
 
-      # Step 2: List modified and added files
-      - name: Get Modified Files
-        id: changes
+      - name: Push to Approved Code Repository
         run: |
-          echo "## Getting added and modified files"
-          git diff --name-only HEAD^ HEAD > changes.txt
-          echo "Modified files:"
-          cat changes.txt
-          echo "::set-output name=files::$(cat changes.txt)"
-
-
+      	 git clone https://github.com/PawarSavitha/Logicapp-workflow Final-Logic-app-code
+      	 cp -r * Final-Logic-app-code/
+      	 cd Final-Logic-app-code
+      	 git config PawarSavitha "GitHub Action"
+      	 git config savithapawar038@gmail.com l "action@github.com"
+      	 git add .
+      	 git commit -m "Approved logic app code"
+      	 git push origin main
