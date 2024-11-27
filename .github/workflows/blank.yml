@@ -16,8 +16,14 @@ jobs:
       - name: Identify modified files
         id: get_changed_files
         run: |
-          # Get the list of modified files in the latest commit
-          changed_files=$(git diff --name-only HEAD^..HEAD)
+          # Check if this is the initial commit (first commit)
+          if [ $(git rev-list --count HEAD) -eq 1 ]; then
+            echo "Initial commit detected. Listing all files."
+            changed_files=$(git ls-files)
+          else
+            echo "Listing modified files from the latest commit."
+            changed_files=$(git diff --name-only HEAD^..HEAD)
+          fi
           echo "Changed files: $changed_files"
           echo "::set-output name=changed_files::$changed_files"
 
