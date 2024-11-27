@@ -13,15 +13,17 @@ jobs:
       - name: Checkout Repository 1
         uses: actions/checkout@v3
 
-      - name: Debug Directory Structure
-        run: |
-          echo "Current Directory Structure:"
-          find .
-
       - name: Identify modified files
         id: get_changed_files
         run: |
-          changed_files=$(git diff --name-only HEAD^..HEAD)
+          # Check if this is the initial commit
+          if [ $(git rev-list --count HEAD) -eq 1 ]; then
+            echo "Initial commit detected. Listing all files."
+            changed_files=$(git ls-files)
+          else
+            echo "Listing modified files from the latest commit."
+            changed_files=$(git diff --name-only HEAD^..HEAD)
+          fi
           echo "Changed files: $changed_files"
           echo "::set-output name=changed_files::$changed_files"
 
@@ -32,25 +34,3 @@ jobs:
       - name: Clone Approved Code Repository
         env:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}
-        run: |
-          git clone https://$REPO2_PAT@github.com/PawarSavitha/approved-code-repo.git Final-Logic-app-code
-
-      - name: Copy modified files to Repo 2
-        run: |
-          changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
-          if [ -n "$changed_files" ]; then
-            for file in $changed_files; do
-              if [[ $file == Logicapp-workflow/workflows/* ]]; then
-                cp $file Final-Logic-app-code/
-              fi
-            done
-          fi
-
-      - name: Commit and Push Changes to Repo 2
-        run: |
-          cd Final-Logic-app-code
-          git config user.name "PawarSavitha"
-          git config user.email "savithapawar038@gmail.com"
-          git add .
-          git diff --cached --exit-code || git commit -m "Add modified files"
-          git push origin main
