@@ -44,4 +44,8 @@ jobs:
         run: |
           mkdir -p Final-Logic-app-code/Deploy
           changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
-          if [ -n "$ch
+          if [ -n "$changed_files" ]; then
+            for file in $changed_files; do
+              cp "$file" "Final-Logic-app-code/Deploy/"
+            done
+          fi
