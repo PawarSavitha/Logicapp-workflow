@@ -21,9 +21,9 @@ jobs:
     # Step 2: Clone the code-approve repository
     - name: Clone the code-approve Repository
       run: |
-        git clone https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git PawarSavitha/code-approve
+        git clone https://github.com/PawarSavitha/code-approve.git PawarSavitha/code-approve
         cd PawarSavitha/code-approve
-        git remote set-url origin https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git
+        git remote set-url origin https://github.com/PawarSavitha/code-approve.git
 
     # Step 3: Copy the modified files to the Deploy directory in the code-approve repo
     - name: Copy Files to the code-approve Repository
@@ -48,4 +48,4 @@ jobs:
         git config user.email "savithapawar038@gmail.com"
         git add .
         git diff --cached --exit-code || git commit -m "Add modified files"
-        git push origin main
+        git push https://$GITHUB_TOKEN@github.com/PawarSavitha/code-approve.git main
