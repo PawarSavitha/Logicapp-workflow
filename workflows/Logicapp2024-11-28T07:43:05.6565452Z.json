@@ -1,0 +1,58 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflows.json#",
+    "actions": {
+      "Send_an_HTTP_request_to_Website": {
+        "type": "Http",
+        "inputs": {
+          "method": "POST",
+          "uri": "https://example.com/api",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "message": "{ \"text\": \"Hello from Logic App!\" }"
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    "triggers": {
+      "When_an_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "triggerWord": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "parameters": {
+    "$connections": {
+      "value": {
+        "shared_http": {
+          "connectionId": "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Web/connections/http",
+          "connectionName": "http",
+          "id": "/subscriptions/<subscription-id>/providers/Microsoft.Web/locations/<location>/managedApis/http"
+        }
+      }
+    }
+  },
+  "connections": {
+    "value": {
+      "http": {
+        "id": "/subscriptions/<subscription-id>/providers/Microsoft.Web/locations/<location>/managedApis/http",
+        "connectionName": "http",
+        "parameterValueSet": {}
+      }
+    }
+  }
+}
