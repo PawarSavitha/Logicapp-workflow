@@ -20,8 +20,10 @@ jobs:
 
     # Step 2: Clone the code-approve repository
     - name: Clone the code-approve Repository
+      env:
+       REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Ensure the PAT secret is set in the repo's secrets
       run: |
-        git clone https://github.com/PawarSavitha/code-approve.git PawarSavitha/code-approve
+        git clone https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git PawarSavitha/code-approve
         cd PawarSavitha/code-approve
         git remote set-url origin https://github.com/PawarSavitha/code-approve.git
 
