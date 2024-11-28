@@ -50,5 +50,5 @@ jobs:
         git config user.email "savithapawar038@gmail.com"
         git add .
         git diff --cached --exit-code || git commit -m "Add modified files"
-        git push https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git main
+        git push https://$CODE_APPROVED@github.com/PawarSavitha/code-approve.git main
 
