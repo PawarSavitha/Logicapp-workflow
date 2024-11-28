@@ -8,55 +8,74 @@ on:
       - 'workflows/**'  # Watch changes in the workflows director
 
 jobs:
-  process-changed-files:
+  sync:
     runs-on: ubuntu-latest
+    
     steps:
-      # Step 1: Checkout the repository with full history
-      - name: Checkout Source Repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Fetch full commit history
+    - name: Checkout the first repository (Logicapp-workflow)
+      uses: actions/checkout@v3
+      with:
+        repository: PawarSavitha/Logicapp-workflow
+        token: ${{ secrets.REPO1_PAT }}
+        
+    - name: Detect changed files
+      run: |
+        echo "Checking for changes..."
+        if git rev-parse HEAD^ >/dev/null 2>&1; then
+          echo "Not the initial commit"
+          changed_files=$(git diff --name-only HEAD^ HEAD)
+        else
+          echo "Initial commit detected"
+          changed_files=$(git ls-files)
+        fi
+        echo "Changed files: $changed_files"
+        echo "changed_files=$changed_files" >> $GITHUB_ENV
+        
+    - name: Clone the second repository (code-approve)
+      run: |
+        git clone https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git PawarSavitha/code-approve
+        
+    - name: Debug - List the contents of the second repo
+      run: |
+        echo "Listing the contents of the repository:"
+        ls -R PawarSavitha/code-approve
 
-      # Step 2: Identify changed files
-      - name: Identify Changed Files
-        id: changed-files
-        run: |
-          if git rev-parse HEAD^ >/dev/null 2>&1; then
-            echo "Not the initial commit"
-            changed_files=$(git diff --name-only HEAD^ HEAD)
-          else
-            echo "Initial commit detected"
-            changed_files=$(git ls-files)
-          fi
-          echo "Changed files: $changed_files"
-          echo "changed_files=$changed_files" >> $GITHUB_ENV
+    - name: Copy the changed files to the second repository
+      run: |
+        if [ -n "$changed_files" ]; then
+          for file in $changed_files; do
+            # Ensure Deploy directory exists in Repo 2 before copying
+            mkdir -p PawarSavitha/code-approve/Deploy
+            cp "$file" PawarSavitha/code-approve/Deploy/
+          done
+        else
+          echo "No files to copy"
+        fi
+        
+    - name: Debug - Check the contents of the Deploy directory
+      run: |
+        echo "Contents of the Deploy directory in the second repo:"
+        ls -R PawarSavitha/code-approve/Deploy/
 
-      # Step 3: Clone the second repository
-      - name: Clone Second Repository
-        run: |
-          git clone https://$REPO2_PAT@github.com/PawarSavitha/Logicapp-workflow.git PawarSavitha/code-approve
-        env:
-          REPO2_PAT: ${{ secrets.REPO2_PAT }}
+    - name: Check git status in the second repository
+      run: |
+        cd PawarSavitha/code-approve
+        git status
+        
+    - name: Commit and push changes to the second repository
+      run: |
+        cd PawarSavitha/code-approve
+        git add .
+        git commit -m "Add modified files"
+        git push https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git
+        
+    - name: Debug - Check commit log in the second repository
+      run: |
+        cd PawarSavitha/code-approve
+        git log --oneline
 
-      # Step 4: Copy changed files to the second repository
-      - name: Copy Changed Files
-        run: |
-          if [ -n "${{ env.changed_files }}" ]; then
-            for file in ${{ env.changed_files }}; do
-              # Ensure Deploy directory exists in Repo 2 before copying
-              mkdir -p PawarSavitha/code-approve/Deploy
-              cp "$file" PawarSavitha/code-approve/Deploy/
-            done
-          else
-            echo "No files to copy"
-          fi
-
-      # Step 5: Commit and push changes to the second repository
-      - name: Commit and Push Changes
-        run: |
-          cd PawarSavitha/code-approve
-          git config user.name "PawarSavitha"
-          git config user.email "savithapawar038@gmail.com"
-          git add .
-          git diff --cached --exit-code || git commit -m "Add modified files"
-          git push origin main
+    - name: Final check - List files in the second repo
+      run: |
+        cd PawarSavitha/code-approve
+        echo "Final check: Listing files in the second repo"
+        ls -R PawarSavitha/code-approve
