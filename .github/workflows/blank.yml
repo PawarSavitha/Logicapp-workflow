@@ -44,7 +44,7 @@ jobs:
         env:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Ensure the PAT secret is set in the repo's secrets
         run: |
-          git clone https://$REPO2_PAT@github.com/PawarSavitha/gicapp-workflow.git PawarSavitha/code-approve
+          git clone https://$REPO2_PAT@github.com/PawarSavitha/Logicapp-workflow.git PawarSavitha/code-approve
 
       # Copy modified files to Repo 2's Deploy directory
       - name: Copy modified files to Repo 2's Deploy directory
