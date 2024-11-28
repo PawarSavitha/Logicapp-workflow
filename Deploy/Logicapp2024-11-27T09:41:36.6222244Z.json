@@ -1,0 +1,35 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Http_Request_to_Chrome": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "http://<chrome-debug-ip>:<chrome-debug-port>/json",
+                    "body": {
+                        "id": 1,
+                        "method": "Target.createTarget",
+                        "params": {
+                            "url": "https://www.example.com"
+                        }
+                    },
+                    "headers": {
+                        "Content-Type": "application/json"
+                    }
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "When_an_HTTP_request_is_received": {
+                "inputs": {
+                    "schema": {}
+                },
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {}
+}
+///
