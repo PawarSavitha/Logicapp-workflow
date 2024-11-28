@@ -41,31 +41,23 @@ jobs:
       # Step 4: Copy changed files to the second repository
       - name: Copy Changed Files
         run: |
-          echo "Listing changed files to be copied: ${{ env.changed_files }}"
           if [ -n "${{ env.changed_files }}" ]; then
             for file in ${{ env.changed_files }}; do
               # Ensure Deploy directory exists in Repo 2 before copying
-              echo "Copying file: $file"
               mkdir -p PawarSavitha/code-approve/Deploy
+              echo "Copying file: $file"
               cp "$file" PawarSavitha/code-approve/Deploy/
             done
           else
             echo "No files to copy"
           fi
 
-      # Step 5: Check file existence in the target directory and commit
-      - name: Verify File in Deploy Directory and Commit Changes
+      # Step 5: Commit and push changes to the second repository
+      - name: Commit and Push Changes
         run: |
-          echo "Checking Deploy directory for copied files..."
-          ls PawarSavitha/code-approve/Deploy
           cd PawarSavitha/code-approve
           git config user.name "PawarSavitha"
           git config user.email "savithapawar038@gmail.com"
           git add .
-          git diff --cached --exit-code || git commit -m "Add modified files"
-          
-      # Step 6: Push changes to the second repository
-      - name: Push Changes to Second Repository
-        run: |
-          cd PawarSavitha/code-approve
+          git diff --cached --exit-code || git commit -m "Add modified files" || echo "No changes detected"
           git push origin main
