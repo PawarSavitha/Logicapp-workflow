@@ -30,13 +30,10 @@
                     }
                 },
                 "type": "Request"
+                "kind": "HTTP"
             }
         }
     },
     "parameters": {
-        "$connections": {
-            "defaultValue": {},
-            "type": "Object"
-        }
     }
 }
