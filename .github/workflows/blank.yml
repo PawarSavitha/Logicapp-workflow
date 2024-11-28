@@ -39,12 +39,12 @@ jobs:
         run: |
           echo "Changed files: ${{ steps.get_changed_files.outputs.changed_files }}"
 
-      # Clone Repo 2 (Final-Logic-app-code)
+      # Clone Repo 2 (code-approve)
       - name: Clone Approved Code Repository
         env:
           REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Ensure the PAT secret is set in the repo's secrets
         run: |
-          git clone https://$REPO2_PAT@github.com/PawarSavitha/Final-Logic-app-code.git PawarSavitha/Final-Logic-app-code.git
+          git clone https://$REPO2_PAT@github.com/PawarSavitha/gicapp-workflow.git PawarSavitha/code-approve
 
       # Copy modified files to Repo 2's Deploy directory
       - name: Copy modified files to Repo 2's Deploy directory
@@ -55,8 +55,8 @@ jobs:
               # Only copy files from the Logicapp-workflow/workflows/ directory
               if [[ $file == Logicapp-workflow/workflows/* ]]; then
                 # Ensure Deploy directory exists in Repo 2 before copying
-                mkdir -p Final-Logic-app-code/Deploy
-                cp "$file" Final-Logic-app-code/Deploy/  # Copy each changed file to Deploy directory
+                mkdir -p code-approve/Deploy
+                cp "$file" code-approve/Deploy/  # Copy each changed file to Deploy directory
               fi
             done
           fi
@@ -65,7 +65,7 @@ jobs:
       - name: Commit and Push Changes to Repo 2
         run: |
           # Commit changes in Repo 2
-          cd PawarSavitha/Final-Logic-app-code  # Navigate to the cloned Repo 2 directory
+          cd PawarSavitha/code-approve  # Navigate to the cloned Repo 2 directory
           git config user.name "PawarSavitha"  # Configure git username
           git config user.email "savithapawar038@gmail.com"  # Configure git email
           git add .  # Stage all changes in the Deploy directory
