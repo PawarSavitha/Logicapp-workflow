@@ -68,7 +68,8 @@ jobs:
       - name: Push Changes to Second Repository
         run: |
           cd PawarSavitha/code-approve
-          git push https://PawarSavitha:{{ secrets.$REPO2_PAT}}@github.com/PawarSavitha/code-approve.git main
+          git push https://PawarSavitha:${{ secrets.REPO2_PAT }}@github.com/PawarSavitha/code-approve.git main
+
 
           
 
