@@ -8,47 +8,65 @@ on:
       - 'workflows/**'  # Watch changes in the workflows director
 
 jobs:
-  sync:
+  process-changed-files:
     runs-on: ubuntu-latest
-
     steps:
-    # Step 1: Checkout the current repository (Logicapp-workflow)
-    - name: Checkout LogicApp Workflow Repository
-      uses: actions/checkout@v3
-      with:
-        repository: PawarSavitha/Logicapp-workflow
+      # Step 1: Checkout the repository with full history
+      - name: Checkout Source Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch full commit history
 
-    # Step 2: Clone the code-approve repository
-    - name: Clone the code-approve Repository
-      env:
-       REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Ensure the PAT secret is set in the repo's secrets
-      run: |
-        git clone https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git PawarSavitha/code-approve
-        cd PawarSavitha/code-approve
-        git remote set-url origin https://github.com/PawarSavitha/code-approve.git
+      # Step 2: Identify changed files
+      - name: Identify Changed Files
+        id: changed-files
+        run: |
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            echo "Not the initial commit"
+            changed_files=$(git diff --name-only HEAD^ HEAD)
+          else
+            echo "Initial commit detected"
+            changed_files=$(git ls-files)
+          fi
+          echo "Changed files: $changed_files"
+          echo "changed_files=$changed_files" >> $GITHUB_ENV
 
-    # Step 3: Copy the modified files to the Deploy directory in the code-approve repo
-    - name: Copy Files to the code-approve Repository
-      run: |
-        echo "Listing changed files to be copied: $changed_files"
-        if [ -n "$changed_files" ]; then
-          for file in $changed_files; do
-            # Ensure Deploy directory exists in Repo 2 before copying
-            echo "Copying file: $file"
-            mkdir -p PawarSavitha/code-approve/Deploy
-            cp "$file" PawarSavitha/code-approve/Deploy/
-          done
-        else
-          echo "No files to copy"
-        fi
+      # Step 3: Clone the second repository
+      - name: Clone Second Repository
+        run: |
+          git clone https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git PawarSavitha/code-approve
+        env:
+          REPO2_PAT: ${{ secrets.REPO2_PAT }}
 
-    # Step 4: Commit and Push Changes to code-approve Repository
-    - name: Commit and Push Changes to code-approve Repository
-      run: |
-        cd PawarSavitha/code-approve
-        git config user.name "PawarSavitha"
-        git config user.email "savithapawar038@gmail.com"
-        git add .
-        git diff --cached --exit-code || git commit -m "Add modified files"
-        git push https://$CODE_APPROVED@github.com/PawarSavitha/code-approve.git main
+      # Step 4: Copy changed files to the second repository
+      - name: Copy Changed Files
+        run: |
+          echo "Listing changed files to be copied: ${{ env.changed_files }}"
+          if [ -n "${{ env.changed_files }}" ]; then
+            for file in ${{ env.changed_files }}; do
+              # Ensure Deploy directory exists in Repo 2 before copying
+              echo "Copying file: $file"
+              mkdir -p PawarSavitha/code-approve/Deploy
+              cp "$file" PawarSavitha/code-approve/Deploy/
+            done
+          else
+            echo "No files to copy"
+          fi
+
+      # Step 5: Check file existence in the target directory and commit
+      - name: Verify File in Deploy Directory and Commit Changes
+        run: |
+          echo "Checking Deploy directory for copied files..."
+          ls PawarSavitha/code-approve/Deploy
+          cd PawarSavitha/code-approve
+          git config user.name "PawarSavitha"
+          git config user.email "savithapawar038@gmail.com"
+          git add .
+          git diff --cached --exit-code || git commit -m "Add modified files"
+          
+      # Step 6: Push changes to the second repository
+      - name: Push Changes to Second Repository
+        run: |
+          cd PawarSavitha/code-approve
+          git push https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git main
 
