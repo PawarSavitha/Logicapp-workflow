@@ -1,6 +1,0 @@
-json(concat(
-    '{"promptCode":', string(outputs('Compose')), 
-    ',"logicAppDetails":{"LAname":"', triggerBody()?['logic_app_name'],
-    '","resourceGroup":"', triggerBody()?['resource_group_name'],
-    '","subscription":"', triggerBody()?['azure_subscription_id'], '"}}'
-))
