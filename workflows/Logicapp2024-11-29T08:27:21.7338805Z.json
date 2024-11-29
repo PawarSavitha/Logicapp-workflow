@@ -1,0 +1,66 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "HTTPRequestToChrome": {
+                "type": "Http",
+                "inputs": {
+                    "method": "POST",  // Use GET or other methods as per your requirement
+                    "uri": "https://<your-chrome-service-endpoint>",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": {
+                        "message": "@triggerBody()?['message']"
+                    }
+                },
+                "runAfter": {}
+            }
+        },
+        "triggers": {
+            "manualTrigger": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "message": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "message"
+                        ]
+                    }
+                }
+            }
+        },
+        "contentVersion": "1.0.0.0"
+    },
+    "parameters": {}
+}
+```
+
+Explanation:
+- **Trigger**: The Logic App is triggered by an HTTP request. The trigger definition includes a schema that specifies a single required property: `message`.
+- **HTTPRequestToChrome**: This action performs an HTTP request to the specified URL (replace `https://<your-chrome-service-endpoint>` with the actual endpoint). It sends a JSON body containing the `message` field from the trigger input.
+
+Here’s a step-by-step guide on configuring this in the Azure portal:
+
+1. Create a new Logic App.
+2. Use the Logic App Designer to add a trigger: Select the `Request` trigger.
+3. Define the JSON schema that the HTTP request expects. In this example, it's:
+
+    ```json
+    {
+        "type": "object",
+        "properties": {
+            "message": {
+                "type": "string"
+            }
+        },
+        "required": [
+            "message"
+        ]
+    }
