@@ -1,0 +1,88 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Check_Threshold": {
+        "actions": {
+          "Send_an_email": {
+            "inputs": {
+              "body": {
+                "ContentType": "Text",
+                "HtmlBody": "The value is greater than the threshold.",
+                "To": "recipient@example.com",
+                "Subject": "Threshold Alert"
+              },
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['office365']['connectionId']"
+                }
+              },
+              "method": "post",
+              "path": "/v2/Mail"
+            },
+            "runAfter": {},
+            "type": "ApiConnection"
+          }
+        },
+        "expression": "@greater(triggerBody()?['value'], 100)",
+        "runAfter": {
+          "Parse_JSON": [
+            "Succeeded"
+          ]
+        },
+        "type": "If"
+      },
+      "Parse_JSON": {
+        "inputs": {
+          "content": "@triggerBody()",
+          "schema": {
+            "properties": {
+              "value": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "runAfter": {
+          "When_a_HTTP_request_is_received": [
+            "Succeeded"
+          ]
+        },
+        "type": "ParseJson"
+      },
+      "When_a_HTTP_request_is_received": {
+        "inputs": {},
+        "runAfter": {},
+        "type": "Request"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "inputs": {
+          "schema": {
+            "properties": {
+              "value": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "value"
+            ],
+            "type": "object"
+          }
+        },
+        "kind": "Http",
+        "type": "Request"
+      }
+    }
+  },
+  "parameters": {
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  }
+}

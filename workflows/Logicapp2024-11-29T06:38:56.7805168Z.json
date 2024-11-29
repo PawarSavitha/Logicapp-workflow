@@ -1,0 +1,54 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_an_email_(V2)": {
+                "inputs": {
+                    "body": "@triggerOutputs()?['body/Subject']",
+                    "subject": "New Email Notification",
+                    "to": "recipient@example.com"
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_new_email_arrives_(V3)": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['office365']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/v2/mail/inbox/messages"
+                },
+                "recurrence": {
+                    "frequency": "Minute",
+                    "interval": 5
+                },
+                "type": "Http"
+            }
+        }
+    },
+    "outputs": {},
+    "parameters": {
+        "$connections": {
+            "value": {
+                "office365": {
+                    "connectionId": "/subscriptions/{subscription-id}/providers/Microsoft.Web/connections/office365/{connection-name}",
+                    "connectionName": "{connection-name}",
+                    "id": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/connections/office365"
+                }
+            }
+        }
+    }
+}

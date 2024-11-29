@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "actions": {
+        "HTTP_Request_to_Chrome": {
+            "inputs": {
+                "method": "POST",
+                "uri": "https://localhost:9222/json",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "cmd": "Page.navigate",
+                    "params": {
+                        "url": "https://www.example.com"
+                    }
+                }
+            },
+            "runAfter": {},
+            "type": "Http"
+        }
+    },
+    "triggers": {
+        "manual": {
+            "inputs": {
+                "schema": {}
+            },
+            "kind": "Http",
+            "type": "Request"
+        }
+    },
+    "outputs": {},
+    "description": "Logic App that triggers on an HTTP request and sends HTTP request to Chrome"
+}
