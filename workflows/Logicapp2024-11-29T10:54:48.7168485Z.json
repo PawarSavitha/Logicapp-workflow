@@ -1,0 +1,38 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json",
+        "actions": {
+            "HTTP_Request_to_Chrome": {
+                "inputs": {
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "method": "POST",
+                    "uri": "http://localhost:9222/json", // Endpoint where to send the request
+                    "body": {
+                        // Body of the request
+                        "id": 1,
+                        "method": "Network.enable",
+                        "params": {}
+                    }
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "ManualTrigger": {
+                "inputs": {
+                    "schema": {}
+                },
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {}
+}
+ "logicAppDetails": {
+    "name": "promptlogicapp",
+    "resourceGroup": "CustomAppsIntServices",
+    "subscription": "047ae087-7d35-4c57-8fe9-7a442cc9cf16"
+  }
