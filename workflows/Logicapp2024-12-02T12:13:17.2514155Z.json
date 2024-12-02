@@ -1,0 +1,50 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_an_HTTP_request_to_Chrome": {
+                "inputs": {
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "method": "POST",
+                    "uri": "http://localhost:9222/json/new?https://www.example.com", // This URL will need to be changed to the desired endpoint
+                    "body": {
+                        "url": "https://www.example.com"
+                    }
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "inputs": {
+                    "schema": {
+                        "properties": {},
+                        "type": "object"
+                    }
+                },
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "defaultValue": {},
+            "type": "Object"
+        }
+    },
+    "triggers": {
+        "When_a_HTTP_request_is_received": {
+            "recurrence": null,
+            "splitOn": null,
+            "type": "Request"
+        }
+    }
+} 
+LogicAppDetails:{
+  "logicAppName": "promptlogicapp",
+  "resourceGroup": "CustomAppsIntServices",
+  "subscription": "047ae087-7d35-4c57-8fe9-7a442cc9cf16"
+}
