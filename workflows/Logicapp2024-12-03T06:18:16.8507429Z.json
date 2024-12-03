@@ -1,0 +1,50 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Send_http_request": {
+        "type": "Http",
+        "inputs": {
+          "method": "POST",
+          "uri": "https://your-chrome-endpoint-url/your-api-path", // Replace with the actual endpoint URL
+          "body": "@triggerBody()",
+          "headers": {
+            "Content-Type": "application/json"
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    "triggers": {
+      "manualTrigger": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {}
+  },
+  "parameters": {},
+  "triggers": {
+    "manualTrigger": {
+      "recurrence": null,
+      "splitOn": null,
+      "metadata": null,
+      "conditions": [],
+      "runAfter": null,
+      "advancedInputs": null,
+      "trackedProperties": null
+    }
+  },
+  "actions": {
+    "Send_http_request": {
+      "runAfter": {}
+    }
+  }
+}
