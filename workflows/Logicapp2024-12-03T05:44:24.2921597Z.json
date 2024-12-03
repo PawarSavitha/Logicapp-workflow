@@ -1,0 +1,92 @@
+{"logicAppname":"Tueslogicapp","resourceGroup":"CustomAppsIntServices","subscription":"047ae087-7d35-4c57-8fe9-7a442cc9cf16"}
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Http_Request": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "https://example.com/endpoint"  // Replace with your target URI
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "inputs": {},
+                "metadata": {
+                    "operationMetadata": {
+                        "brandColor": "#FF8822",
+                        "primaryProperty": "method",
+                        "primaryValue": "POST"
+                    }
+                },
+                "type": "Request"
+            }
+        }
+    },
+    "kind": "Stateful"
+}
+```
+
+### Explanation:
+
+1. **Trigger: When a HTTP request is received**
+
+- The trigger is set to activate when an HTTP request is received. This is defined with `"type": "Request"`.
+
+2. **Action: HTTP Request**
+
+- The action sends a POST request to a specified URI. Replace `"https://example.com/endpoint"` with the actual URL you want to send the HTTP request to (Chrome endpoint or any other endpoint).
+
+### Customization:
+
+- **Method & Headers:** You can customize the method (e.g., GET, POST) and add necessary headers if required.
+- **URI:** Make sure to replace the placeholder URI `"https://example.com/endpoint"` with the actual endpoint URI you are targeting.
+- **Body:** If you need to send a payload, you can include a `body` element within the `inputs` of the HTTP action.
+
+### Example with Body:
+
+If you want to include a body in the HTTP request, you could adjust the `inputs` as follows:
+
+```json
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Http_Request": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "https://example.com/endpoint", // Replace with your target URI
+                    "body": {
+                        "key": "value"
+                    },
+                    "headers": {
+                        "Content-Type": "application/json"
+                    }
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "inputs": {},
+                "metadata": {
+                    "operationMetadata": {
+                        "brandColor": "#FF8822",
+                        "primaryProperty": "method",
+                        "primaryValue": "POST"
+                    }
+                },
+                "type": "Request"
+            }
+        }
+    },
+    "kind": "Stateful"
+}
