@@ -1,0 +1,31 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_HTTP_Request_to_Chrome": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "https://example.com/endpoint", // Replace with actual Chrome endpoint
+                    "body": {
+                        "message": "This is a test message to Chrome" // Customize based on your needs
+                    },
+                    "headers": {
+                        "Content-Type": "application/json"
+                    }
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "manualTrigger": {
+                "inputs": {
+                    "schema": {}
+                },
+                "type": "Request"
+            }
+        },
+        "outputs": {}
+    },
+    "kind": "Stateful"
+}
