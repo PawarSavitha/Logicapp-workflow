@@ -1,0 +1,36 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_HTTP_Request": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "YOUR_TARGET_URL",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": "@triggerBody()"
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "manual": {
+                "inputs": {
+                    "schema": {
+                        "properties": {},
+                        "required": [],
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {
+    },
+    "connections": {
+    }
+}
