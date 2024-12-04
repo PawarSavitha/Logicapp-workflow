@@ -1,37 +1,52 @@
 {
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        "actions": {
-            "Send_HTTP_Request_to_Chrome": {
-                "inputs": {
-                    "method": "POST",
-                    "uri": "http://<Your_Chrome_Instance_Endpoint>", // Replace with your Chrome instance endpoint
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
-                    "body": {
-                        // Assuming you want to open a URL in Chrome
-                        "command": "newTab",
-                        "url": "http://www.example.com" // Replace with the URL you want to open
-                    }
-                },
-                "runAfter": {},
-                "type": "Http"
-            }
-        },
         "triggers": {
             "When_an_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http",
                 "inputs": {
-                    "schema": {} // Define schema if needed
-                },
-                "type": "Request"
+                    "schema": {
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "url",
+                            "message"
+                        ],
+                        "type": "object"
+                    }
+                }
+            }
+        },
+        "actions": {
+            "Send_an_HTTP_request_to_Chrome": {
+                "runAfter": {},
+                "type": "Http",
+                "inputs": {
+                    "uri": "https://www.google.com",
+                    "method": "GET",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
             }
         }
     },
     "parameters": {
-        "connections": {
-            "defaultValue": {},
-            "type": "Object"
+        "$connections": {
+            "value": {}
         }
     }
 }
