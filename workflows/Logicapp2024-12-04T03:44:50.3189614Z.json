@@ -1,31 +1,52 @@
 {
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        "actions": {
-            "Send_HTTP_Request_to_Chrome": {
+        "triggers": {
+            "When_an_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http",
                 "inputs": {
-                    "method": "POST",
-                    "uri": "https://example.com/endpoint", // Replace with actual Chrome endpoint
-                    "body": {
-                        "message": "This is a test message to Chrome" // Customize based on your needs
-                    },
+                    "schema": {
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "url",
+                            "message"
+                        ],
+                        "type": "object"
+                    }
+                }
+            }
+        },
+        "actions": {
+            "Send_an_HTTP_request_to_Chrome": {
+                "runAfter": {},
+                "type": "Http",
+                "inputs": {
+                    "uri": "https://www.google.com",
+                    "method": "GET",
                     "headers": {
                         "Content-Type": "application/json"
                     }
-                },
-                "runAfter": {},
-                "type": "Http"
+                }
             }
         },
-        "triggers": {
-            "manualTrigger": {
-                "inputs": {
-                    "schema": {}
-                },
-                "type": "Request"
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
             }
-        },
-        "outputs": {}
+        }
     },
-    "kind": "Stateful"
+    "parameters": {
+        "$connections": {
+            "value": {}
+        }
+    }
 }
