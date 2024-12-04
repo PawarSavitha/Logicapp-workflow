@@ -1,0 +1,44 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "HTTP_Request_to_Chrome": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "https://<CHROME_ENDPOINT_URL>",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": {
+                        "message": "Hello Chrome!"
+                    }
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "inputs": {
+                    "schema": {
+                        "properties": {
+                            "message": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        }
+    }
+}
