@@ -1,0 +1,37 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_HTTP_Request_to_Chrome": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "http://<Your_Chrome_Instance_Endpoint>", // Replace with your Chrome instance endpoint
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": {
+                        // Assuming you want to open a URL in Chrome
+                        "command": "newTab",
+                        "url": "http://www.example.com" // Replace with the URL you want to open
+                    }
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "When_an_HTTP_request_is_received": {
+                "inputs": {
+                    "schema": {} // Define schema if needed
+                },
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {
+        "connections": {
+            "defaultValue": {},
+            "type": "Object"
+        }
+    }
+}
