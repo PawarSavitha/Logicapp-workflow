@@ -1,0 +1,88 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_HTTP_Request_to_Chrome": {
+                "inputs": {
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "method": "POST",
+                    "uri": "https://www.googleapis.com/chrome/"
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "When_an_HTTP_request_is_received": {
+                "inputs": {
+                    "schema": {
+                        "properties": {
+                            "example_property": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {}
+}
+```
+
+Explanation:
+
+1. **Trigger:** The Logic App triggers on receiving an HTTP request. The `"schema"` defines the expected JSON payload that the request might include. You can modify `"example_property"` as per the actual expected request payload.
+
+2. **Action:** Once the trigger is activated by receiving an HTTP request, the Logic App sends an HTTP request to an endpoint (`https://www.googleapis.com/chrome/` in this example). You can replace the `uri` value with the actual Chrome API endpoint you want to target.
+
+3. **Method:** The HTTP method used in the action is `POST`. If you need a different method, you can change `"method"` to `GET`, `PUT`, `DELETE`, etc.
+
+4. **Headers:** The request contains headers where `"Content-Type": "application/json"` is set, which can be modified based on the target API requirements.
+
+5. **Payload:** If additional data needs to be sent in the request body, you can include it in the `inputs` of `"Send_HTTP_Request_to_Chrome"` action. 
+
+Here's the refined template if JSON payload needs to be included in the HTTP request:
+
+```json
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_HTTP_Request_to_Chrome": {
+                "inputs": {
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "method": "POST",
+                    "uri": "https://www.googleapis.com/chrome/",
+                    "body": {
+                        "example_key": "example_value"
+                    }
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "When_an_HTTP_request_is_received": {
+                "inputs": {
+                    "schema": {
+                        "properties": {
+                            "example_property": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {}
+}
