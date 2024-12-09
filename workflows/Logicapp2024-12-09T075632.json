@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
@@ -16,7 +15,6 @@
         "type": "Http"
       }
     },
-<<<<<<< HEAD
     "triggers": {
       "When_an_HTTP_request_is_received": {
         "inputs": {
@@ -42,52 +40,4 @@
     "outputs": {}
   },
   "parameters": {}
-=======
-  "parameters": {}
-
->>>>>>> 3995016da973aa48a042fd562a3c40adf67affa3
-=======
-    "definition": {
-        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        "actions": {
-            "Send_HTTP_Request": {
-                "inputs": {
-                    "method": "POST",
-                    "uri": "<Your_Chrome_Endpoint_URL>",
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
-                    "body": "@triggerBody()"
-                },
-                "runAfter": {},
-                "type": "Http"
-            }
-        },
-        "triggers": {
-            "When_an_HTTP_request_is_received": {
-                "inputs": {
-                    "schema": {
-                        "properties": {
-                            "name": {
-                                "type": "string"
-                            },
-                            "message": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "name",
-                            "message"
-                        ],
-                        "type": "object"
-                    }
-                },
-                "type": "Request"
-            }
-        },
-        "outputs": {}
-    },
-  "parameters": {}
-
->>>>>>> 7d90633770f3a1735d9a9cc86e54f1ea9d65ec93
 }
