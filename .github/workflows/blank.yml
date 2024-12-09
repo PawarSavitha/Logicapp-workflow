@@ -1,71 +1,69 @@
+name: Sync Logic App Workflows
+
 on:
   push:
     branches:
       - main  # Trigger only when there's a push to the main branch
     paths:
-      - 'workflows/**'  # Watch changes in the workflows directory
+      - 'workflows/**'  # Watch changes in the workflows director
 
 jobs:
-  push-modified-file:
+  process-changed-files:
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout Repo 1
-      - name: Checkout Repository 1
+      # Step 1: Checkout the repository with full history
+      - name: Checkout Source Repository
         uses: actions/checkout@v3
         with:
-          repository: PawarSavitha/Logicapp-workflow  # Replace with your Repo 1's name
-          ref: main
+          fetch-depth: 0  # Fetch full commit history
 
-      # Identify modified files from the latest commit
-      - name: Identify modified files
-        id: get_changed_files
+      # Step 2: Identify changed files
+      - name: Identify Changed Files
+        id: changed-files
         run: |
-          # Check if this is the initial commit
-          if [ $(git rev-list --count HEAD) -eq 1 ]; then
-            echo "Initial commit detected. Listing all files."
-            changed_files=$(git ls-files)  # List all files if it's the initial commit
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            echo "Not the initial commit"
+            changed_files=$(git diff --name-only HEAD^ HEAD)
           else
-            echo "Listing modified files from the latest commit."
-            changed_files=$(git diff --name-only HEAD^..HEAD)  # Get modified files from the latest commit
+            echo "Initial commit detected"
+            changed_files=$(git ls-files)
           fi
           echo "Changed files: $changed_files"
-          echo "::set-output name=changed_files::$changed_files"  # Output the changed files
-
-      # Debug: Check which files are modified
-      - name: Debug Changed Files
+          echo "changed_files=$changed_files" >> $GITHUB_ENV
+      # Step 3: Clone the second repository
+      - name: Clone Second Repository
         run: |
-          echo "Changed files: ${{ steps.get_changed_files.outputs.changed_files }}"
-
-      # Clone Repo 2 (code-approve)
-      - name: Clone Approved Code Repository
+          git clone https://$REPO2_PAT@github.com/PawarSavitha/code-approve.git PawarSavitha/code-approve
         env:
-          REPO2_PAT: ${{ secrets.REPO2_PAT }}  # Ensure the PAT secret is set in the repo's secrets
-        run: |
-          git clone https://$REPO2_PAT@github.com/PawarSavitha/Logicapp-workflow.git PawarSavitha/code-approve
+          REPO2_PAT: ${{ secrets.REPO2_PAT }}
 
-      # Copy modified files to Repo 2's Deploy directory
-      - name: Copy modified files to Repo 2's Deploy directory
+      # Step 4: Copy changed files to the second repository
+      - name: Copy Changed Files
         run: |
-          changed_files="${{ steps.get_changed_files.outputs.changed_files }}"
-          if [ -n "$changed_files" ]; then
-            for file in $changed_files; do
-              # Only copy files from the Logicapp-workflow/workflows/ directory
-              if [[ $file == Logicapp-workflow/workflows/* ]]; then
-                # Ensure Deploy directory exists in Repo 2 before copying
-                mkdir -p code-approve/Deploy
-                cp "$file" code-approve/Deploy/  # Copy each changed file to Deploy directory
-              fi
+          echo "Listing changed files to be copied: ${{ env.changed_files }}"
+          if [ -n "${{ env.changed_files }}" ]; then
+            for file in ${{ env.changed_files }}; do
+              # Ensure Deploy directory exists in Repo 2 before copying
+              echo "Copying file: $file"
+              mkdir -p PawarSavitha/code-approve/Deploy
+              cp "$file" PawarSavitha/code-approve/Deploy/
             done
+          else
+            echo "No files to copy"
           fi
-
-      # Commit and push the modified files to Repo 2
-      - name: Commit and Push Changes to Repo 2
+      # Step 5: Check file existence in the target directory and commit
+      - name: Verify File in Deploy Directory and Commit Changes
         run: |
-          # Commit changes in Repo 2
-          cd PawarSavitha/code-approve  # Navigate to the cloned Repo 2 directory
-          git config user.name "PawarSavitha"  # Configure git username
-          git config user.email "savithapawar038@gmail.com"  # Configure git email
-          git add .  # Stage all changes in the Deploy directory
-          git diff --cached --exit-code || git commit -m "Add modified files"  # Only commit if there are changes
-          git push origin main  # Push changes to Repo 2
+          echo "Checking Deploy directory for copied files..."
+          ls PawarSavitha/code-approve/Deploy
+          cd PawarSavitha/code-approve
+          git config user.name "PawarSavitha"
+          git config user.email "savithapawar038@gmail.com"
+          git add .
+          git diff --cached --exit-code || git commit -m "Add modified files"
+          
+      # Step 6: Push changes to the second repository
+      - name: Push Changes to Second Repository
+        run: |
+          cd PawarSavitha/code-approve
+          git push https://PawarSavitha:${{ secrets.REPO2_PAT }}@github.com/PawarSavitha/code-approve.git main
