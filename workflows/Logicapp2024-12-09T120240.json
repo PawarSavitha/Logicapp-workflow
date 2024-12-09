@@ -32,7 +32,7 @@
                             }
                         },
                         "required": [
-                            "key"  // replace with your required properties
+                            "key" 
                         ]
                     }
                 },
