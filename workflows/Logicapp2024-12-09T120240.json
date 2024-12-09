@@ -43,9 +43,10 @@
         "contentVersion": "1.0.0.0"
     },
     "location": "YOUR_LOGIC_APP_LOCATION",  // Replace with your Logic App location (e.g., "westus")
-    "properties": {
-        "definition": "[CONVERT_TO_BASE64('{}')]",
-        "parameters": {},
-        "tags": {}
-    }
+  "properties": {
+    "definition": "[CONVERT_TO_BASE64('{}')]",
+    "parameters": {},
+    "tags": {}
+  }
+
 }
