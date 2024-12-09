@@ -1,0 +1,95 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "CopyBlobToAnotherContainer": {
+                "inputs": {
+                    "body": {
+                        "sourceUri": "@concat('https://<source-storage-account-name>.blob.core.windows.net/', triggerOutputs()?['headers']['x-ms-container'], '/', triggerOutputs()?['headers']['x-ms-blob'])",
+                        "storageAccount": "<destination-storage-account-name>",
+                        "storageContainer": "<destination-container-name>",
+                        "storageBlobName": "@triggerOutputs()?['headers']['x-ms-blob']"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/datasets/default/copyBlob",
+                    "authentication": {
+                        "type": "ManagedServiceIdentity"
+                    }
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            },
+            "SendEmailNotification": {
+                "inputs": {
+                    "body": {
+                        "Message": "A new file '@triggerOutputs()?['headers']['x-ms-blob']' has been copied successfully.",
+                        "Subject": "New Blob File Notification",
+                        "To": "<your-email@example.com>"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['office365']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/v2/Mail",
+                    "authentication": {
+                        "type": "ManagedServiceIdentity"
+                    }
+                },
+                "runAfter": {
+                    "CopyBlobToAnotherContainer": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            }
+        },
+        "triggers": {
+            "When_a_blob_is_added_or_modified_(properties_only)": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/datasets/default/triggers/When_a_blob_is_added_or_modified_(properties_only)",
+                    "authentication": {
+                        "type": "ManagedServiceIdentity"
+                    },
+                    "queries": {
+                        "container": "<source-container-name>",
+                        "recursive": false
+                    }
+                },
+                "splitOn": "@triggerOutputs()?['body']",
+                "type": "ApiConnection"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "defaultValue": {},
+            "type": "Object"
+        }
+    },
+    "connections": {
+        "azureblob": {
+            "connectionId": "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Web/connections/azureblob",
+            "connectionName": "azureblob",
+            "id": "/subscriptions/<subscription-id>/providers/Microsoft.Web/locations/<location-name>/managedApis/azureblob"
+        },
+        "office365": {
+            "connectionId": "/subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Web/connections/office365",
+            "connectionName": "office365",
+            "id": "/subscriptions/<subscription-id>/providers/Microsoft.Web/locations/<location-name>/managedApis/office365"
+        }
+    },
+    "outputs": {}
+}
