@@ -1,42 +1,52 @@
 {
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        "actions": {
-            "HTTPRequest": {
-                "inputs": {
-                    "method": "POST",
-                    "uri": "<YOUR_CHROME_ENDPOINT>",
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
-                    "body": "@triggerBody()"
-                },
-                "runAfter": {},
-                "type": "Http"
-            }
-        },
         "triggers": {
-            "manual": {
+            "When_an_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http",
                 "inputs": {
                     "schema": {
                         "properties": {
-                            "exampleProperty": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "message": {
                                 "type": "string"
                             }
                         },
+                        "required": [
+                            "url",
+                            "message"
+                        ],
                         "type": "object"
                     }
-                },
-                "kind": "Http",
-                "type": "Request"
+                }
+            }
+        },
+        "actions": {
+            "Send_an_HTTP_request_to_Chrome": {
+                "runAfter": {},
+                "type": "Http",
+                "inputs": {
+                    "uri": "https://www.google.com",
+                    "method": "GET",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
             }
         }
     },
     "parameters": {
         "$connections": {
-            "defaultValue": {},
-            "type": "Object"
+            "value": {}
         }
-    },
-    "triggers": {}
+    }
 }
