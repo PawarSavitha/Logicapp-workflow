@@ -1,0 +1,51 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {},
+        "triggers": {
+            "manualTrigger": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "method": {
+                                "type": "string"
+                            },
+                            "body": {
+                                "type": "object"
+                            },
+                            "headers": {
+                                "type": "object"
+                            }
+                        },
+                        "required": [
+                            "url",
+                            "method"
+                        ]
+                    }
+                }
+            }
+        },
+        "actions": {
+            "HTTP": {
+                "type": "Http",
+                "inputs": {
+                    "method": "@{triggerOutputs()?['queries']['method']}",
+                    "uri": "@{triggerOutputs()?['queries']['url']}",
+                    "headers": "@triggerBody()?['headers']",
+                    "body": "@triggerBody()?['body']"
+                },
+                "runAfter": {}
+            }
+        }
+    },
+    "endpointsConfiguration": {
+        "serviceProviderConnections": {}
+    }
+}
