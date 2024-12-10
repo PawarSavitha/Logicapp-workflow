@@ -1,36 +1,52 @@
 {
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        "actions": {
-            "httpRequest": {
-                "inputs": {
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
-                    "method": "POST",
-                    "uri": "https://example.com/endpoint"  // Replace with your target URL
-                },
-                "runAfter": {},
-                "type": "Http"
-            }
-        },
         "triggers": {
-            "manualTrigger": {
+            "When_an_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http",
                 "inputs": {
                     "schema": {
-                        "properties": {},
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "url",
+                            "message"
+                        ],
                         "type": "object"
                     }
-                },
-                "kind": "Http",
-                "type": "Request"
+                }
             }
         },
-        "contentVersion": "1.0.0.0"
+        "actions": {
+            "Send_an_HTTP_request_to_Chrome": {
+                "runAfter": {},
+                "type": "Http",
+                "inputs": {
+                    "uri": "https://www.google.com",
+                    "method": "GET",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
+            }
+        }
     },
-    "location": "<Your_Logic_App_Region>",
-    "name": "<Your_Logic_App_Name>",
-    "properties": {
-        "state": "Enabled"
+    "parameters": {
+        "$connections": {
+            "value": {}
+        }
     }
 }
