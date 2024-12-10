@@ -15,7 +15,6 @@
         "type": "Http"
       }
     },
-<<<<<<< HEAD
     "triggers": {
       "When_an_HTTP_request_is_received": {
         "inputs": {
@@ -41,6 +40,4 @@
     "outputs": {}
   },
   "parameters": {}
-  "parameters": {}
-}
 
