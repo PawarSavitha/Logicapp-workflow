@@ -1,0 +1,36 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "httpRequest": {
+                "inputs": {
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "method": "POST",
+                    "uri": "https://example.com/endpoint"  // Replace with your target URL
+                },
+                "runAfter": {},
+                "type": "Http"
+            }
+        },
+        "triggers": {
+            "manualTrigger": {
+                "inputs": {
+                    "schema": {
+                        "properties": {},
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        },
+        "contentVersion": "1.0.0.0"
+    },
+    "location": "<Your_Logic_App_Region>",
+    "name": "<Your_Logic_App_Name>",
+    "properties": {
+        "state": "Enabled"
+    }
+}
