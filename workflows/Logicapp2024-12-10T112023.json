@@ -1,0 +1,60 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "HTTPRequestToChrome": {
+        "inputs": {
+          "method": "POST",
+          "uri": "http://localhost:9515/session", // Chrome WebDriver instance URL
+          "body": {
+            "desiredCapabilities": {
+              "browserName": "chrome"
+            }
+          }
+        },
+        "runAfter": {},
+        "type": "Http"
+      }
+    },
+    "triggers": {
+      "manualTrigger": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "parameters": {}
+}
+```
+
+Explanation of the JSON Workflow:
+1. **Trigger (manualTrigger)**: The workflow is triggered by an HTTP request. The `inputs` schema specifies that the request body should contain a JSON object with a `url` property of type string.
+2. **Action (HTTPRequestToChrome)**: This action sends an HTTP POST request to a Chrome WebDriver instance running at `http://localhost:9515/session`. It initiates a new session with desired capabilities, specifically the use of the Chrome browser.
+
+### Notes:
+- Replace `http://localhost:9515/session` with the appropriate URL for your Chrome WebDriver setup if it is different.
+- The `body` in the action can be adapted based on the capabilities and configurations needed for your Chrome instance.
+- Ensure that your environment is properly set up for Azure Logic Apps and that Chrome WebDriver is running and accessible from the Logic App instance.
+
+### How to use the Logic App:
+1. Create a new Logic App through the Azure Portal.
+2. Use the provided JSON to define the Logic App workflow.
+3. Save and run the Logic App.
+4. To trigger the Logic App, send an HTTP POST request to the Logic App's HTTP trigger URL with a JSON body containing the `url` property.
+
+Example request body:
+```json
+{
+  "url": "http://example.com"
+}
