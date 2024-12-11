@@ -1,30 +1,52 @@
 {
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        "actions": {
-            "Send_an_HTTP_request": {
+        "triggers": {
+            "When_an_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http",
                 "inputs": {
+                    "schema": {
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "url",
+                            "message"
+                        ],
+                        "type": "object"
+                    }
+                }
+            }
+        },
+        "actions": {
+            "Send_an_HTTP_request_to_Chrome": {
+                "runAfter": {},
+                "type": "Http",
+                "inputs": {
+                    "uri": "https://www.google.com",
+                    "method": "GET",
                     "headers": {
                         "Content-Type": "application/json"
-                    },
-                    "method": "POST",
-                    "uri": "https://your-chrome-service-endpoint",
-                    "body": {
-                        "exampleField": "exampleValue"
                     }
-                },
-                "runAfter": {},
-                "type": "Http"
+                }
             }
         },
-        "triggers": {
-            "manualTrigger": {
-                "inputs": {},
-                "kind": "Http",
-                "type": "Request"
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
             }
-        },
-        "contentVersion": "1.0.0.0"
+        }
     },
-    "parameters": {}
+    "parameters": {
+        "$connections": {
+            "value": {}
+        }
+    }
 }
