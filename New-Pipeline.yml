@@ -10,7 +10,7 @@ variables:
   azureSubscription: 'Logic-app-connection'  # Azure DevOps Service Connection
   resourceGroupName: 'CustomAppsIntServices'
   azureRegion: 'South India'
-  logicAppName: 'LA_NewFlow'
+  logicAppName: 'LA_NewFlow'  # This can be dynamically passed or set
 
 stages:
   - stage: Deploy_LogicApps
@@ -74,10 +74,13 @@ stages:
                 for file in $CHANGED_FILES; do
                   echo "Deploying Logic App for file: $file"
                   WORKFLOW_NAME=$(basename "$file" .json)
-                  az deployment group create \
+
+                  # Deploy the Logic App using the dynamically set logicAppName
+                  az logic workflow create \
                     --resource-group $(resourceGroupName) \
-                    --template-file "$file" \
-                    --parameters logicAppName=$(logicAppName) \
-                    location=$(azureRegion)
+                    --name $(logicAppName) \
+                    --definition @$file \
+                    --location $(azureRegion)
+
                   echo "Deployment for $WORKFLOW_NAME completed."
                 done
