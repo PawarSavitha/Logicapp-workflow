@@ -30,4 +30,47 @@ stages:
           - script: |
               echo "Identifying changed workflow files..."
               git fetch origin main  # Ensure the latest branch state is fetched
-              CHANGED_FILES=$(
+              CHANGED_FILES=$(git diff --name-only origin/main HEAD | grep '^workflows/.*\.json$' || true)
+
+              if [ -z "$CHANGED_FILES" ]; then
+                echo "No changed files detected."
+                echo "##vso[task.setvariable variable=changedFiles;]none"
+              else
+                echo "Changed files: $CHANGED_FILES"
+                echo "##vso[task.setvariable variable=changedFiles;]$CHANGED_FILES"
+              fi
+            displayName: "Identify Changed Workflow Files"
+
+          # Step 3: Azure CLI Login
+          - task: AzureCLI@2
+            displayName: "Azure CLI Login"
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                echo "Azure Login Successful."
+
+          # Step 4: Deploy Logic Apps for each changed file
+          - task: AzureCLI@2
+            displayName: "Deploy Logic App Templates"
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                CHANGED_FILES="$(changedFiles)"
+                if [ "$CHANGED_FILES" == "none" ]; then
+                  echo "No changed files to deploy."
+                  exit 0
+                fi
+
+                for file in $CHANGED_FILES; do
+                  echo "Deploying Logic App for file: $file"
+                  WORKFLOW_NAME=$(basename "$file" .json)
+                  az deployment group create \
+                    --resource-group $(resourceGroupName) \
+                    --template-file "$file" \
+                    --parameters logicAppName=$WORKFLOW_NAME location=$(azureRegion)
+                  echo "Deployment for $WORKFLOW_NAME completed."
+                done
