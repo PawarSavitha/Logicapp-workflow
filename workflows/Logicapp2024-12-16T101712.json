@@ -1,34 +1,53 @@
+
 {
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        "actions": {
-            "HTTP_Request_To_Chrome": {
+        "triggers": {
+            "When_an_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http",
                 "inputs": {
-                    "body": {
-                        "example": "data"
-                    },
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
-                    "method": "POST",
-                    "uri": "https://your-chrome-endpoint.com/api/data"
-                },
-                "runAfter": {},
-                "type": "Http"
+                    "schema": {
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "url",
+                            "message"
+                        ],
+                        "type": "object"
+                    }
+                }
             }
         },
-        "contentVersion": "1.0.0.0",
-        "outputs": {},
-        "triggers": {
-            "manualTrigger": {
-                "inputs": {},
-                "recurrence": {
-                    "frequency": "Minute",
-                    "interval": 1
-                },
-                "type": "Request"
+        "actions": {
+            "Send_an_HTTP_request_to_Chrome": {
+                "runAfter": {},
+                "type": "Http",
+                "inputs": {
+                    "uri": "https://www.google.com",
+                    "method": "GET",
+                    "headers": {
+                        "Content-Type": "application/json"
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
             }
         }
     },
-    "parameters": {}
+    "parameters": {
+        "$connections": {
+            "value": {}
+        }
+    }
 }
