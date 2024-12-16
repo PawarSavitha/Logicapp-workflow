@@ -80,7 +80,7 @@ stages:
                     --resource-group $(resourceGroupName) \
                     --name $(logicAppName) \
                     --definition @$file \
-                    --location $(azureRegion)
+                    --location "$(azureRegion)"
 
                   echo "Deployment for $WORKFLOW_NAME completed."
                 done
