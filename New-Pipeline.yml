@@ -10,6 +10,7 @@ variables:
   azureSubscription: 'Logic-app-connection'  # Azure DevOps Service Connection
   resourceGroupName: 'CustomAppsIntServices'
   azureRegion: 'South India'
+  logicAppName: 'LA_NewFlow'
 
 stages:
   - stage: Deploy_LogicApps
@@ -76,6 +77,6 @@ stages:
                   az deployment group create \
                     --resource-group $(resourceGroupName) \
                     --template-file "$file" \
-                    --parameters logicAppName=$WORKFLOW_NAME location=$(azureRegion)
+                    --parameters logicAppName=$(logicAppName) location=$(azureRegion)
                   echo "Deployment for $WORKFLOW_NAME completed."
                 done
